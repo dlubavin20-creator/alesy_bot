@@ -103,37 +103,37 @@ while True:
         updates = respone.get("result", [])
 
         for update in updates:
-            last_update_id = update["update_id"]
+            last_update_id = update['update_id']
             try:
-                text1 = update["message"].get("text", "")
+                text1 = update['message'].get("text", "")
             except KeyError:
                 text1 = ""
             if text1 == "/contact":
                 contact = True
-                contact_id = update["message"]["from"].get("id", "")
+                contact_id = update['message']['from'].get("id", "")
                 requests.post(TOKEN, json={"chat_id": contact_id, "text": "Опишите Вашу проблему одним сообщением"})
-                contact_name = update["message"]["from"].get("username", "")
+                contact_name = update['message']['from'].get("username", "")
             elif not text1.startswith("/") and contact:
-                message_id = update["message"]["message_id"]
-                if update["message"]["from"]["id"] == contact_id:
-                    requests.post(TOKEN, json={"chat_id": CHAT_ID, "text": f"Сообщений от {update["message"]["from"]["first_name"]}, username: {update["message"]["from"]["username"]}"})
-                    requests.post(FORWARDMESSAGE, json={"from_chat_id": update["message"]["from"]["id"], "message_id": message_id, "chat_id": CHAT_ID})
+                message_id = update['message']['message_id']
+                if update['message']['from']['id'] == contact_id:
+                    requests.post(TOKEN, json={"chat_id": CHAT_ID, "text": f"Сообщений от {update['message']['from']['first_name']}, username: {update['message']['from']['username']}"})
+                    requests.post(FORWARDMESSAGE, json={"from_chat_id": update['message']['from']['id'], "message_id": message_id, "chat_id": CHAT_ID})
                     requests.post(TOKEN, json={"chat_id": contact_id, "text": "Спасибо за обращение. Мы свяжемся с Вами в ближайшее время"})
                     contact = False
             
             
             if "callback_query" in update:
-                c_id = str(update["callback_query"]["from"]["id"])
-                choice = update["callback_query"]["data"] 
-                if choice in ["True", "False"]:
+                c_id = str(update['callback_query']['from']['id'])
+                choice = update['callback_query']['data'] 
+                if choice in ['True", "False']:
                     with open("info.json", "r+", encoding="utf8") as f:
                         data = json.load(f)
                         if c_id in data:
-                            data[c_id]["status"] = choice 
+                            data[c_id]['status'] = choice 
                             f.seek(0)
                             json.dump(data, f, indent=4, ensure_ascii=False)
                             f.truncate()
-                            requests.post(DELETE_TOKEN, json={"chat_id": c_id, "message_id": update["callback_query"]["message"]["message_id"]})    
+                            requests.post(DELETE_TOKEN, json={"chat_id": c_id, "message_id": update['callback_query']['message']['message_id']})    
                             if choice == "False":
                                 requests.post(TOKEN, json={"chat_id":c_id, "text": "Почему Вы не сможете прийти"})
                                 answer = True
@@ -141,22 +141,22 @@ while True:
                             else:
                                 requests.post(TOKEN, json={"chat_id": c_id, "text": "Спасибо за ответ"})
                     continue
-                elif choice in ["g1", "g2", "g3", "g4", "g5"]:
+                elif choice in ['g1", "g2", "g3", "g4", "g5']:
                     with open("info.json", "r+", encoding="utf8") as fill:
                         data = json.load(fill)
-                        data[c_id]["trial"] = True
+                        data[c_id]['trial'] = True
                         fill.seek(0)
                         json.dump(data, fill, indent=4, ensure_ascii=False)
                         fill.truncate()
-                        requests.post(DELETE_TOKEN, json={"chat_id": c_id, "message_id": update["callback_query"]["message"]["message_id"]})
-                        requests.post(TOKEN, json={"chat_id": CHAT_ID, "text": f"Пользователь {update["callback_query"]["from"]["first_name"]} с юзернеймом {update["callback_query"]["from"]["username"]} хочет записаться на пробное занятие в группу номер {choice[1]}"})
+                        requests.post(DELETE_TOKEN, json={"chat_id": c_id, "message_id": update['callback_query']['message']['message_id']})
+                        requests.post(TOKEN, json={"chat_id": CHAT_ID, "text": f"Пользователь {update['callback_query']['from']['first_name']} с юзернеймом {update['callback_query']['from']['username']} хочет записаться на пробное занятие в группу номер {choice[1]}"})
                 elif choice == "null":
-                    requests.post(DELETE_TOKEN, json={"chat_id": c_id, "message_id": update["callback_query"]["message"]["message_id"]})
+                    requests.post(DELETE_TOKEN, json={"chat_id": c_id, "message_id": update['callback_query']['message']['message_id']})
 
             if "message" not in update:
                 continue
             
-            chat_id = str(update["message"]["chat"]["id"])
+            chat_id = str(update['message']['chat']['id'])
 
             with open("info.json", "r+", encoding="utf8") as file:
                 try:
@@ -166,7 +166,7 @@ while True:
                 if not text1.isdigit() and answer and chat_id == answerId and text1[0] != "/":
                     with open("answers.json", "r+") as fill:
                         info = json.load(fill)
-                        info["o"].append({"surname": data[str(chat_id)]["surname"], "answer": text1})
+                        info['o'].append({"surname": data[str(chat_id)]['surname'], "answer": text1})
                         fill.seek(0)
                         json.dump(info, fill, indent=4, ensure_ascii=False)
                         fill.truncate()
@@ -174,21 +174,21 @@ while True:
                         requests.post(TOKEN, json={"chat_id": chat_id, "text": "Спасибо за ответ"})
 
                 if text1 == "/toall":
-                    if data[str(update["message"]["from"]["id"])]["admin"] == "True":
+                    if data[str(update['message']['from']['id'])]['admin'] == "True":
                         toall = True
-                        toall_id = update["message"]["from"]["id"]
-                        requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Введите Ваше сообщение которое Вы хотите отправить всем"})
+                        toall_id = update['message']['from']['id']
+                        requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Введите Ваше сообщение которое Вы хотите отправить всем"})
                 
                 if text1 == "/tousers":
-                    if data[str(update["message"]["from"]["id"])]["admin"] == "True":
+                    if data[str(update['message']['from']['id'])]['admin'] == "True":
                         tousers = True
-                        tousers_id = update["message"]["from"]["id"]
-                        requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Здравствуйте введите сообщение для пользователей"})
+                        tousers_id = update['message']['from']['id']
+                        requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Здравствуйте введите сообщение для пользователей"})
 
-                if text1 != "/tousers" and tousers and data[str(update["message"]["from"]["id"])]["admin"] == "True" and update["message"]["from"]["id"] == tousers_id:
-                    messageId = update["message"]["message_id"]
+                if text1 != "/tousers" and tousers and data[str(update['message']['from']['id'])]['admin'] == "True" and update['message']['from']['id'] == tousers_id:
+                    messageId = update['message']['message_id']
                     for i in data:
-                        if data[i]["admin"] == "False":
+                        if data[i]['admin'] == "False":
                             date = {
                                 "chat_id": i,
                                 "from_chat_id": tousers_id,
@@ -197,8 +197,8 @@ while True:
                             requests.post(FORWARDMESSAGE, data=date)
                     requests.post(TOKEN, json={"chat_id": tousers_id, "text": "рассылка окончена"}).json()
                     tousers = False
-                if text1 != "/toall" and toall and data[str(update["message"]["from"]["id"])]["admin"] == "True" and update["message"]["from"]["id"] == toall_id:
-                    messageId = update["message"]["message_id"]
+                if text1 != "/toall" and toall and data[str(update['message']['from']['id'])]['admin'] == "True" and update['message']['from']['id'] == toall_id:
+                    messageId = update['message']['message_id']
                     for i in data:
                         date = {
                             "chat_id": i,
@@ -209,15 +209,15 @@ while True:
                     requests.post(TOKEN, json={"chat_id": toall_id, "text": "Рассылка окончена"})
                     toall = False
                 
-                if text1 == "/toadmins" and data[str(update["message"]["from"]["id"])]["admin"] == "True":
+                if text1 == "/toadmins" and data[str(update['message']['from']['id'])]['admin'] == "True":
                     toadmins = True
-                    toadmins_id = update["message"]["from"]["id"]
-                    requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Введите Ваше сообщение для администраторов"})
+                    toadmins_id = update['message']['from']['id']
+                    requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Введите Ваше сообщение для администраторов"})
                 
-                if text1 != "/toadmins" and toadmins and update["message"]["from"]["id"] == toadmins_id:
-                    messageId = update["message"]["message_id"]
+                if text1 != "/toadmins" and toadmins and update['message']['from']['id'] == toadmins_id:
+                    messageId = update['message']['message_id']
                     for i in data:
-                        if data[i]["admin"] == "True":
+                        if data[i]['admin'] == "True":
                             date = {
                                 "chat_id": i,
                                 "from_chat_id": toadmins_id,
@@ -228,13 +228,13 @@ while True:
                     toadmins = False
                 
                 if text1 == "/help":
-                    if data[str(update["message"]["from"]["id"])]["admin"] == "False":
-                        requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": f"""Здравствуйте {update["message"]["from"]["first_name"]}, вот Ваши команды: 
+                    if data[str(update['message']['from']['id'])]['admin'] == "False":
+                        requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": f"""Здравствуйте {update['message']['from']['first_name']}, вот Ваши команды: 
     /contact - связь с администратором,
     /myclasses - занятия на неделе,
     /photo - мои фотографии"""})
                     else:
-                        requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": f"""Здравствуйте {update["message"]["from"]["first_name"]}, вот Ваши команды:
+                        requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": f"""Здравствуйте {update['message']['from']['first_name']}, вот Ваши команды:
     /toall - сообщение всем,
     /tousers - только пользователям,
     /toadmins - только администраторам,
@@ -249,9 +249,9 @@ while True:
                 
 
                 if text1 == "/myclasses":
-                    if str(update["message"]["from"]["id"]) in data:
+                    if str(update['message']['from']['id']) in data:
                         numbers()
-                        if data[str(update["message"]["from"]["id"])]["group"] == 1:
+                        if data[str(update['message']['from']['id'])]['group'] == 1:
                             datetime.datetime.now().weekday + 1
                             if today <= 2:
                                 numbers()
@@ -261,59 +261,59 @@ while True:
                                 months(current_week[4])
                                 text2 = text2 + f"{answer_text} 16:30-20:00"
 
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": text2})
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": text2})
                             elif today <= 5:
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": f"У Вас будет занятие {current_week[4]} {month[datetime.datetime.now().month]} 16:30 - 20:00"})
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": f"У Вас будет занятие {current_week[4]} {month[datetime.datetime.now().month]} 16:30 - 20:00"})
                             else:
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "У Вас на этой неделе больше не осталось занятий"})
-                        elif data[str(update["message"]["from"]["id"])]["group"] == 2:
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "У Вас на этой неделе больше не осталось занятий"})
+                        elif data[str(update['message']['from']['id'])]['group'] == 2:
                             if today <= 6:
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": f"У Вас занятие {current_week[5]} {month[datetime.datetime.now().month]} 11:00 - 15.00"})
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": f"У Вас занятие {current_week[5]} {month[datetime.datetime.now().month]} 11:00 - 15.00"})
                             else:
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "У Вас на этой неделе больше не осталось занятий"})
-                        elif data[str(update["message"]["from"]["id"])]["group"] == 3:
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "У Вас на этой неделе больше не осталось занятий"})
+                        elif data[str(update['message']['from']['id'])]['group'] == 3:
                             if today <= 6:
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": f"У Вас занятие {current_week[5]} {month[datetime.datetime.now().month]} 15.30 - 19:30"})
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": f"У Вас занятие {current_week[5]} {month[datetime.datetime.now().month]} 15.30 - 19:30"})
                             else:
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "У Вас на этой неделе больше не осталось занятий"})
-                        elif data[str(update["message"]["from"]["id"])]["group"] == 4:
-                            requests.post(TOKEN, json={"text": f"У Вас занятие {current_week[6]} {month[datetime.datetime.now().month]} 11:00 - 15:00", "chat_id": update["message"]["from"]["id"] })
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "У Вас на этой неделе больше не осталось занятий"})
+                        elif data[str(update['message']['from']['id'])]['group'] == 4:
+                            requests.post(TOKEN, json={"text": f"У Вас занятие {current_week[6]} {month[datetime.datetime.now().month]} 11:00 - 15:00", "chat_id": update['message']['from']['id'] })
                         else:
-                            requests.post(TOKEN, json={"text": f"У Вас занятие {current_week[6]} {month[datetime.datetime.now().month]} 15:30 - 19:30", "chat_id": update["message"]["from"]["id"] })
+                            requests.post(TOKEN, json={"text": f"У Вас занятие {current_week[6]} {month[datetime.datetime.now().month]} 15:30 - 19:30", "chat_id": update['message']['from']['id'] })
 
                 if text1 == "/pastevents":
                     requests.post(TOKEN, json={"chat_id": chat_id, "text": "Показы в которых мы участвовали: https://школакутюрье.рф/events"})
 
                 if text1 == "/trial":
-                    if data[str(update["message"]["from"]["id"])]["trial"] != True:
-                        if str(update["message"]["from"]["id"]) in data and data[str(update["message"]["from"]["id"])]["surname"] != None:
+                    if data[str(update['message']['from']['id'])]['trial'] != True:
+                        if str(update['message']['from']['id']) in data and data[str(update['message']['from']['id'])]['surname'] != None:
                             numbers()
                             today = datetime.datetime.now().weekday + 1
                             months(current_week[0])
                             g1 = 1000
                             # Поставьте 0 если хотите сделать так чтобы в первую группу можно было записаться
-                            if data[str(update["message"]["from"]["id"])]["group"] == 1:
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Извините но мы не поддерживаем пробные занятие в первой группе"})
+                            if data[str(update['message']['from']['id'])]['group'] == 1:
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Извините но мы не поддерживаем пробные занятие в первой группе"})
                             # Удалите чтобы не Вылезало сообщение "Извините но мы не поддерживаем пробные занятие в первой группе"
                             g2 = 0
                             g3,g4,g5 = 0, 0, 0
                             for i in data:
                                 if today <= 5:
-                                    if data[i]["group"] == 1 and data[i]["status"] == "True":
+                                    if data[i]['group'] == 1 and data[i]['status'] == "True":
                                         g1 += 1
                                 elif today == 6:
-                                    if data[i]["group"] == 2:
+                                    if data[i]['group'] == 2:
                                         g2 += 1
-                                    elif data[i]["group"] == 3:
+                                    elif data[i]['group'] == 3:
                                         g3 += 1
                                 else:
-                                    if data[i]["group"] == 4:
+                                    if data[i]['group'] == 4:
                                         g4 += 1
-                                    elif data[i]["group"] == 5:
+                                    elif data[i]['group'] == 5:
                                         g5 += 1
                             needed = min([g1, g2, g3, g4, g5])
                             if needed >= 10:
-                                requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Извините все места заняты"})
+                                requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Извините все места заняты"})
                             else:
                                 if g1 == needed:
                                     btn = {"inline_keyboard": [[
@@ -321,7 +321,7 @@ while True:
                                         {"text": "Нет", "callback_data": "null"}
                                     ]]}
                                     txt1 = {
-                                        "chat_id": update["message"]["from"]["id"],
+                                        "chat_id": update['message']['from']['id'],
                                         "text": "Вы хотите записаться в группу 1?",
                                         "reply_markup": json.dumps(btn)
 
@@ -332,7 +332,7 @@ while True:
                                         {"text": "Нет", "callback_data": "null"}
                                     ]]}
                                     txt1 = {
-                                        "chat_id": update["message"]["from"]["id"],
+                                        "chat_id": update['message']['from']['id'],
                                         "text": "Вы хотите записаться в группу 2?",
                                         "reply_markup": json.dumps(btn)
 
@@ -343,7 +343,7 @@ while True:
                                         {"text": "Нет", "callback_data": "null"}
                                     ]]}
                                     txt1 = {
-                                        "chat_id": update["message"]["from"]["id"],
+                                        "chat_id": update['message']['from']['id'],
                                         "text": "Вы хотите записаться в группу 3?",
                                         "reply_markup": json.dumps(btn)
 
@@ -354,7 +354,7 @@ while True:
                                         {"text": "Нет", "callback_data": "null"}
                                     ]]}
                                     txt1 = {
-                                        "chat_id": update["message"]["from"]["id"],
+                                        "chat_id": update['message']['from']['id'],
                                         "text": "Вы хотите записаться в группу 4?",
                                         "reply_markup": json.dumps(btn)
 
@@ -365,49 +365,49 @@ while True:
                                         {"text": "Нет", "callback_data": "null"}
                                     ]]}
                                     txt1 = {
-                                        "chat_id": update["message"]["from"]["id"],
+                                        "chat_id": update['message']['from']['id'],
                                         "text": "Вы хотите записаться в группу 5?",
                                         "reply_markup": json.dumps(btn)
 
                                     }
                                 requests.post(TOKEN, json=txt1)
                         else:
-                            requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Авторизуйтесь в боте пожалуйста"})
+                            requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Авторизуйтесь в боте пожалуйста"})
                     else:
-                        requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Вы уже записывались на пробное занятие"})
+                        requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Вы уже записывались на пробное занятие"})
                 if text1 == "/upcomingevents":
                     with open("UE.json", "r") as fi:
                         data1 = json.load(fi)
-                    if "upcomingevents" in data1 and len(data1["upcomingevents"]) >= 1:
-                        for j in range(len(data1["upcomingevents"])):
+                    if "upcomingevents" in data1 and len(data1['upcomingevents']) >= 1:
+                        for j in range(len(data1['upcomingevents'])):
                             date = {"chat_id": chat_id,
-                                    "from_chat_id": data1["upcomingevents"][j]["from_chat_id"],
-                                    "message_id": data1["upcomingevents"][j]["message_id"]
+                                    "from_chat_id": data1['upcomingevents'][j]['from_chat_id'],
+                                    "message_id": data1['upcomingevents'][j]['message_id']
                                     }
                             requests.post(FORWARDMESSAGE, date)
                     else:
                         requests.post(TOKEN, json={"chat_id": chat_id, "text": "Пока что нету предстоящих мероприятий"})
                 if text1 == "/addupcomingevents":
-                    if data[str(chat_id)]["admin"] == "True":
+                    if data[str(chat_id)]['admin'] == "True":
                         addUEId = chat_id
                         addUE = True
                         requests.post(TOKEN, json={"chat_id": chat_id, "text": "Пришлите предстоящие мероприятие"})
                 if not text1.startswith("/") and chat_id == addUEId and addUE:
                     with open("UE.json", "r+") as filling:
                         dat = json.load(filling)
-                        dat["upcomingevents"].append({"from_chat_id": chat_id, "message_id": update["message"]["message_id"]})
+                        dat['upcomingevents'].append({"from_chat_id": chat_id, "message_id": update['message']['message_id']})
                         filling.seek(0)
                         json.dump(dat, filling, ensure_ascii=False, indent=4)
                         filling.truncate()
                     requests.post(TOKEN, json={"chat_id": addUEId, "text": "Мероприятие успешно добавленно"})
                     addUE = False
                 if text1 == "/photo":
-                    if str(update["message"]["from"]["id"]) in data:
-                        if requests.get(f"https://disk.yandex.ru/d/Xl41T86IOxHYfg/{data[str(update["message"]["from"]["id"])]["surname"]}").status_code <= 299 and requests.get(f"https://disk.yandex.ru/d/Xl41T86IOxHYfg/{data[str(update["message"]["from"]["id"])]["surname"]}").status_code > 199:
-                            requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": f"Здравствуйте, вот Ваша ссылка: https://disk.yandex.ru/d/Xl41T86IOxHYfg/{data[str(update["message"]["from"]["id"])]["surname"]}"})
+                    if str(update['message']['from']['id']) in data:
+                        if requests.get(f"https://disk.yandex.ru/d/Xl41T86IOxHYfg/{data[str(update['message']['from']['id'])]['surname']}").status_code <= 299 and requests.get(f"https://disk.yandex.ru/d/Xl41T86IOxHYfg/{data[str(update['message']['from']['id'])]['surname']}").status_code > 199:
+                            requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": f"Здравствуйте, вот Ваша ссылка: https://disk.yandex.ru/d/Xl41T86IOxHYfg/{data[str(update['message']['from']['id'])]['surname']}"})
                         else:
-                            requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Здравствуйте, у Вас нету папки на данный момент"})
-                if text1 == "/check" and data[str(chat_id)]["admin"] == "True":
+                            requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Здравствуйте, у Вас нету папки на данный момент"})
+                if text1 == "/check" and data[str(chat_id)]['admin'] == "True":
                     requests.post(TOKEN, json={"chat_id": chat_id, "text":"Введите дату которую хотите просмотреть"})
                     check = True
                     checkId = chat_id
@@ -424,24 +424,24 @@ while True:
                     reason = []
                     for i in data:
                         r = False
-                        if data[i]["lastDay"] in [int(float(text1)), int(float(text1)) - 1, int(float(text1)) - 2]:
-                            usernames.append(data[i]["name"])
-                            surnames.append(data[i]["surname"])
-                            if data[i]["status"] == "True":
+                        if data[i]['lastDay'] in [int(float(text1)), int(float(text1)) - 1, int(float(text1)) - 2]:
+                            usernames.append(data[i]['name'])
+                            surnames.append(data[i]['surname'])
+                            if data[i]['status'] == "True":
                                 statuses.append("Будет")
-                            elif data[i]["status"] == "sended":
+                            elif data[i]['status'] == "sended":
                                 statuses.append("Не ответил")
                             else:
                                 statuses.append("Не будет")
                                 with open("answers.json", "r") as d:
-                                    content = json.load(d)["o"]
+                                    content = json.load(d)['o']
                                     for n in range(len(content)):
-                                        if content[n]["surname"] == data[i]["surname"]:
-                                            reason = content[n]["answer"]
+                                        if content[n]['surname'] == data[i]['surname']:
+                                            reason = content[n]['answer']
                                             r = True
                                     if reason != []:
                                         reasons.append(reason)
-                            groups.append(data[i]["group"])
+                            groups.append(data[i]['group'])
                             if not r:
                                 reasons.append(" ")
                     if usernames:
@@ -463,7 +463,7 @@ while True:
                 if text1 == "/secret":
                     requests.post(FORWARDMESSAGE, json={"chat_id": chat_id, "from_chat_id": "8126089922", "message_id": 1762}).json()
                 if chat_id not in data:
-                    text = update["message"].get("text", "")
+                    text = update['message'].get("text", "")
                 
                     if text.isdigit() and int(text) <= 5:
                         data[chat_id] = {
@@ -471,7 +471,7 @@ while True:
                             "admin": "False", 
                             "status": "wait",
                             "surname": None, 
-                            "name": update["message"]["from"].get("username"),
+                            "name": update['message']['from'].get("username"),
                             "trial": False,                                   
                             "lastDay": 0
                             }       
@@ -482,7 +482,7 @@ while True:
                         requests.post(TOKEN, json={"chat_id": chat_id, "text": "Группа сохранена!"})
                         requests.post(TOKEN, json={"chat_id": chat_id, "text": "Введите вашу фамилию"})
                         surname = True
-                        hitId = update["message"]["from"]["id"]
+                        hitId = update['message']['from']['id']
                     else:
                         requests.post(TOKEN, json={"chat_id": chat_id, "text": """Вас приветствует Школа Кутюрье! ✨
     Напишите номер группы (только цифру) в которую записан ребёнок или хотите записаться на пробное занятие:
@@ -494,14 +494,14 @@ while True:
 
             if not text1.isdigit() and not text1.startswith("/"):
                 if surname:
-                    if update["message"]["from"]["id"] == hitId:
+                    if update['message']['from']['id'] == hitId:
                         with open("info.json", "r+") as file:
                             data = json.load(file)
-                            data[str(update["message"]["from"]["id"])]["surname"] = text1
+                            data[str(update['message']['from']['id'])]['surname'] = text1
                             file.seek(0)
                             json.dump(data, file, ensure_ascii=False, indent=4)
                             surname = False
-                            requests.post(TOKEN, json={"chat_id": update["message"]["from"]["id"], "text": "Фамилия сохранена"})
+                            requests.post(TOKEN, json={"chat_id": update['message']['from']['id'], "text": "Фамилия сохранена"})
 
         today = datetime.datetime.now().weekday() + 1 
         now = datetime.datetime.now()
@@ -518,29 +518,29 @@ while True:
                     "text": f"Вы будете на занятии {answer_text}?",
                     "reply_markup": json.dumps(inline_kb)
                 }
-                if data[i]["lastDay"] in [int(datetime.datetime.now().day), int(datetime.datetime.now().day) + 1] or data[i]["surname"] == None or data[i]["admin"] == "True":
+                if data[i]['lastDay'] in [int(datetime.datetime.now().day), int(datetime.datetime.now().day) + 1] or data[i]['surname'] == None or data[i]['admin'] == "True":
                     continue
                 else:
                     if datetime.datetime.now().hour > 10 and datetime.datetime.now().hour < 22:
-                        if data[i]["group"] == 1 and today in [1,2,3]:
+                        if data[i]['group'] == 1 and today in [1,2,3]:
                             requests.post(TOKEN, data=txt)
-                            data[i]["status"] = "sended"
-                            data[i]["lastDay"] = datetime.datetime.now().day
+                            data[i]['status'] = "sended"
+                            data[i]['lastDay'] = datetime.datetime.now().day
                             fill.seek(0)
                             json.dump(data, fill, indent=4, ensure_ascii=False)
                             fill.truncate()
 
-                        elif (data[i]["group"] == 2 or data[i]["group"] == 3) and today in [4,5]:
+                        elif (data[i]['group'] == 2 or data[i]['group'] == 3) and today in [4,5]:
                             requests.post(TOKEN, data=txt)
-                            data[i]["status"] = "sended"
-                            data[i]["lastDay"] = datetime.datetime.now().day
+                            data[i]['status'] = "sended"
+                            data[i]['lastDay'] = datetime.datetime.now().day
                             fill.seek(0)
                             json.dump(data, fill, indent=4, ensure_ascii=False)
                             fill.truncate()
-                        elif (data[i]["group"] == 4 or data[i]["group"] == 5) and today in [5, 6]:
+                        elif (data[i]['group'] == 4 or data[i]['group'] == 5) and today in [5, 6]:
                             requests.post(TOKEN, data=txt)
-                            data[i]["status"] = "sended"
-                            data[i]["lastDay"] = datetime.datetime.now().day
+                            data[i]['status'] = "sended"
+                            data[i]['lastDay'] = datetime.datetime.now().day
                             fill.seek(0)
                             json.dump(data, fill, indent=4, ensure_ascii=False)
                             fill.truncate()
@@ -556,24 +556,24 @@ while True:
                 reasons = []
                 for i in data:
                     r = False
-                    if data[i]["lastDay"] in current_week:
-                        usernames.append(data[i]["name"])
-                        surnames.append(data[i]["surname"])
-                        if data[i]["status"] == "True":
+                    if data[i]['lastDay'] in current_week:
+                        usernames.append(data[i]['name'])
+                        surnames.append(data[i]['surname'])
+                        if data[i]['status'] == "True":
                             statuses.append("Будет")
-                        elif data[i]["status"] == "sended":
+                        elif data[i]['status'] == "sended":
                             statuses.append("Не ответил")
                         else:
                             statuses.append("Не будет")
                             with open("answers.json", "r") as d:
-                                content = json.load(d)["o"]
+                                content = json.load(d)['o']
                                 for n in range(len(content)):
-                                    if content[n]["surname"] == data[i]["surname"]:
-                                        reason = content[n]["answer"]
+                                    if content[n]['surname'] == data[i]['surname']:
+                                        reason = content[n]['answer']
                                         r = True
                                 if reason != []:
                                     reasons.append(reason)
-                        groups.append(data[i]["group"])
+                        groups.append(data[i]['group'])
                         if not r:
                             reasons.append(" ")
                 dota = {"Юзер": usernames,
