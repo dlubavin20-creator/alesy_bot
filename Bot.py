@@ -149,7 +149,7 @@ while True:
                         json.dump(data, fill, indent=4, ensure_ascii=False)
                         fill.truncate()
                         requests.post(DELETE_TOKEN, json={'chat_id': c_id, 'message_id': update["callback_query"]["message"]["message_id"]})
-                        requests.post(TOKEN, json={'chat_id': CHAT_ID, 'text': f'Пользователь {update['callback_query']['from']['first_name']} с юзернеймом {update['callback_query']['from']['username']} хочет записаться на пробное занятие в группу номер {choice[1]}'})
+                        requests.post(TOKEN, json={'chat_id': CHAT_ID, 'text': f"Пользователь {update['callback_query']['from']['first_name']} с юзернеймом {update['callback_query']['from']['username']} хочет записаться на пробное занятие в группу номер {choice[1]}"})
                 elif choice == 'null':
                     requests.post(DELETE_TOKEN, json={"chat_id": c_id, "message_id": update['callback_query']['message']['message_id']})
 
