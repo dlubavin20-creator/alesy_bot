@@ -125,7 +125,7 @@ while True:
             if "callback_query" in update:
                 c_id = str(update['callback_query']['from']['id'])
                 choice = update['callback_query']['data'] 
-                if choice in ['True", "False']:
+                if choice in ["True", "False"]:
                     with open("info.json", "r+", encoding="utf8") as f:
                         data = json.load(f)
                         if c_id in data:
@@ -141,7 +141,9 @@ while True:
                             else:
                                 requests.post(TOKEN, json={"chat_id": c_id, "text": "Спасибо за ответ"})
                     continue
-                elif choice in ['g1", "g2", "g3", "g4", "g5']:
+                elif choice in ["g1", "g2", "g3", "g4", "g5"
+                                
+                                ]:
                     with open("info.json", "r+", encoding="utf8") as fill:
                         data = json.load(fill)
                         data[c_id]['trial'] = True
