@@ -1,29 +1,2 @@
 {
-    "201479005": {
-        "group": 4,
-        "admin": "True",
-        "status": "True",
-        "surname": "/myclasses",
-        "name": "lenaf212",
-        "trial": true,
-        "lastDay": 17
-    },
-    "6004396239": {
-        "group": 4,
-        "admin": "False",
-        "status": "True",
-        "surname": "Василенко",
-        "name": "Kuturie_admin",
-        "trial": false,
-        "lastDay": 24
-    },
-    "8126089922": {
-        "group": 2,
-        "admin": "True",
-        "status": "False",
-        "surname": "Любавин",
-        "name": "code_vendor",
-        "trial": false,
-        "lastDay": 23
-    }
 }
